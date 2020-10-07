@@ -11,9 +11,15 @@
 
 cmd()
 {
+    #let user know where the script running
+    working_dir_absolute=$(pwd)
+    echo -n "I am running from here ->  "
+    echo $working_dir_absolute
+    
     # input what to compile and link
     echo -n "Type what to compile -> "
     read c_to_be_compiled   # the .c file
+    loc_of_c_to_be_compiled=$(realpath $c_to_be_compiled)       # save absolute path
     
     echo "Type the relative file path for custom library."
     echo -n "-> "
@@ -23,12 +29,13 @@ cmd()
     lib_to_be_used+="/libapuelib.a"      # append the name to it
     fi
     
-    if [ ! -d out ] ; then      # to save every out file in one dir.
-    mkdir out
+    if [ ! -d ${loc_of_c_to_be_compiled%/*}/out ] ; then      # to save every out file in one dir.
+    mkdir ${loc_of_c_to_be_compiled%/*}/out
     fi
     
     # compile and link
-    gcc -o "out/${c_to_be_compiled%%.c}" $c_to_be_compiled $lib_to_be_used;
+    base_to_be_compiled=$(basename $c_to_be_compiled)
+    gcc -o "${loc_of_c_to_be_compiled%/*}/out/${base_to_be_compiled%%.c}" $c_to_be_compiled $lib_to_be_used;  # the location where to save will be absolute
     
     if [ $? -ne 0 ]     # gcc returns 0 on success
     then
@@ -45,8 +52,9 @@ cmd()
         case "$execute" in
             y | yes | Y | Yes | YES )   echo
                                         echo "=============================="
-                                        ./out/"${c_to_be_compiled%%.c}"     # Execute the file
+                                        ${loc_of_c_to_be_compiled%/*}/out/${base_to_be_compiled%%.c}     # Execute the file
                                         echo "=============================="
+                                        echo
                                         echo "Execution complete"
                                         break ;;
             n | no | N | No | NO )  echo
