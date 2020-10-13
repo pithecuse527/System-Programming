@@ -1,11 +1,11 @@
 //  
 //  main.c
-//  Assignment two for System Programming, UOU - 201948932
+//  Assignment two for System Programming, UOU - 20152262
 //  Created by Hong Geun Ji on 03/10/2020
 //  VIM - Vi IMproved 8.0
 //  Copyright © 2020 Hong Geun Ji. All rights reserved.
 //
-//  Change where to print
+// 
 //  
 
 #include <unistd.h>
