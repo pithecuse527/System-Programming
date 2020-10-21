@@ -15,7 +15,7 @@ Advanced Programming in the UNIX Environment 2nd Edition. (W. Richard Stevens)
 
 # Description
 This is the second assignment for the System Programming, UOU.
-There are three working directories and some screenshots for the assignment implement.
+There are two working directories and some screenshots for the assignment implement.
 Every module has its name with "main". Please take a look at my comments inside of the files.
 
 # Version control
