@@ -129,5 +129,6 @@ char* create_filename(int i)
     strcpy(buff, TO_BE_DIVIDED);        // add the original file name fiest (i.e. buff == "main.c")
     strcat(buff, "_");                  // add '_' to buff (i.e. buff == "main.c_")
     strcat(buff, i_str);                // add the converted string from integer i  (i.e. buff == "main.c_1")
+    free(i_str);
     return buff;
 }
