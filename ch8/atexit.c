@@ -9,7 +9,7 @@ int main()
     if (atexit(my_exit1) != 0) err_sys("cannot register my_exit1");
     if (atexit(my_exit1) != 0) err_sys("cannot register my_exit1");
     printf("main is done\n");
-    return(0);
+    return 0;
 }
 
 static void my_exit1()
