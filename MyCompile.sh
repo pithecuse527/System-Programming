@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/bin/zsh
 ##  MyCompiler.sh
 ##  Created by Hong Geun Ji on 30/09/2020
 ##  Updated by Hong Geun Ji on 12/10/2020 - v0.3
@@ -20,22 +19,24 @@ cmd()
     while (true); do
         echo -n "Type what to compile -> "
         read c_to_be_compiled   # the .c file
-        loc_of_c_to_be_compiled=$(realpath $c_to_be_compiled)       # save absolute path
-        if [ -f ${loc_of_c_to_be_compiled} ]; then                  # check whether the file exists or not
-            break;
+#       loc_of_c_to_be_compiled=$(realpath $c_to_be_compiled)       # save absolute path
+		  loc_of_c_to_be_compiled="${working_dir_absolute}/${c_to_be_compiled}"
+#       if [[ -f "$loc_of_c_to_be_compiled" ]]; then                  # check whether the file exists or not
+		  if test -f "$loc_of_c_to_be_compiled"; then
+			  break;
         fi
         echo "Cannot find the given .c file on $loc_of_c_to_be_compiled"
         echo "Please check the file location"
     done
-    
+	 echo $loc_of_c_to_be_compiled   
     # input the library
     while (true); do
         echo "Type the relative file path for custom library."
         echo -n "-> "
         read lib_to_be_used     # the static library relative path without the file name
         
-        if [[ $lib_to_be_used != *"libapuelib.a" ]]; then   # if user did not explicitly type the file name, 
-            lib_to_be_used+="/libapuelib.a"                 # append the name to it
+        if [[ $lib_to_be_used != *"libApueMacLib.a" ]]; then   # if user did not explicitly type the file name, 
+            lib_to_be_used+="/libApueMacLib.a"                 # append the name to it
         fi
         
         if [ -f ${lib_to_be_used} ]; then                   # check whether the file exists or not
