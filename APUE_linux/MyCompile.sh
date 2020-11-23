@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ##  MyCompiler.sh
 ##  Created by Hong Geun Ji on 30/09/2020
 ##  Updated by Hong Geun Ji on 12/10/2020 - v0.3

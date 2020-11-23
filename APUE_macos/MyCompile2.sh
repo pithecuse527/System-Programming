@@ -1,12 +1,11 @@
 #!/bin/zsh
 ##  MyCompile2.sh
-##  Created by Hong Geun Ji on 30/09/2020
+##  Created by Hong Geun Ji on 21/11/2020
 ##  VIM - Vi IMproved 8.0
 ##  Copyleft © 2020 Hong Geun Ji. You can revise this if you'd like.
 ##
 ##  Using static apue library for a link (simplified version)
 ##
-
 
 # from arguments
 c_to_be_compiled=$1
