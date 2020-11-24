@@ -12,13 +12,12 @@ int main()
     if((pid=vfork()) < 0) {
         err_sys("vfork error");
     }
-    else if (pid == 0)      // accessing parent process
+    else if (pid == 0)
     {
-        globvar++;
+        globvar++;	// accessing parent's variables
         var++;
         exit(0);
     }
-    
     printf("pid = %ld, glob = %d, var = %d\n", (long)getpid(), globvar, var);
     exit(0);
 }
