@@ -7,7 +7,7 @@ void printids(const char *s)
 {
 	pid_t pid;
 	pthread_t tid;
-	
+
 	pid = getpid();
 	tid = pthread_self();
 	printf("%s pid %u tid %u (0x%x)\n", s, (unsigned int)pid, (unsigned int)tid, (unsigned int)tid);
@@ -16,7 +16,7 @@ void printids(const char *s)
 void *thr_fn(void *arg)
 {
 	printids("new thread: ");
-	return((void *)0);
+	return((void *)1);
 }
 
 int main()
@@ -28,4 +28,3 @@ int main()
 	sleep(2);
 	exit(0);
 }
-
