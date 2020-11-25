@@ -37,6 +37,7 @@ while (true); do
         y | yes | Y | Yes | YES )   echo
                                     echo "=============================="
                                     ./out/$obj_file     # Execute the file
+												sleep 5				  # give some time for execution
                                     echo "=============================="
                                     echo
                                     echo "Execution complete"

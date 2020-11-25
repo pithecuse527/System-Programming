@@ -74,6 +74,7 @@ cmd()
             y | yes | Y | Yes | YES )   echo
                                         echo "=============================="
                                         ${loc_of_c_to_be_compiled%/*}/out/${base_to_be_compiled%%.c}     # Execute the file
+													 sleep 5			# give some time for execution
                                         echo "=============================="
                                         echo
                                         echo "Execution complete"

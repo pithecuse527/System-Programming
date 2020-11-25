@@ -71,9 +71,16 @@ cmd()
     while (true); do
         read execute
         case "$execute" in
-            y | yes | Y | Yes | YES )   echo
+            y | yes | Y | Yes | YES )   echo -n "How much time you need to execute? (default is 5 sec.) "
+													              read exec_time_input
+													              echo
                                         echo "=============================="
                                         ${loc_of_c_to_be_compiled%/*}/out/${base_to_be_compiled%%.c}     # Execute the file
+                                        if [[ $exec_time_input =~ ^[0-9]+$ ]] then   # digit check
+                                         sleep $exec_time_input
+                                        else    # if it was not a digit sleep for 5sec.
+                                         sleep 5
+                                        fi
                                         echo "=============================="
                                         echo
                                         echo "Execution complete"
