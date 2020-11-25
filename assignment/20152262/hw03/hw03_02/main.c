@@ -1,3 +1,13 @@
+//  
+//  main.c
+//  Assignment three for System Programming, UOU - 20152262
+//  Created by Hong Geun Ji on 25/11/2020
+//  VIM - Vi IMproved 8.0
+//  Copyright © 2020 Hong Geun Ji. All rights reserved.
+//
+//  execution function implement
+//  
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -108,5 +118,8 @@ int main(int argc, char *argv[])
                 fprintf(stdout, "Print USER of env_var Complete!!\n");
             }
             break;
+        default:
+            fprintf(stderr, "unknown mode\n");
+            exit(-1);
     }
 }
