@@ -1,3 +1,13 @@
+//  
+//  sig.c
+//  Assignment three for System Programming, UOU - 20152262
+//  Created by Hong Geun Ji on 25/11/2020
+//  VIM - Vi IMproved 8.0
+//  Copyright © 2020 Hong Geun Ji. All rights reserved.
+//
+//  print some information based on the given signal
+//  
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -15,6 +25,7 @@ int main(int argc, char *argv[])
     exit(-1);
   }
 
+  // print some information first
   strcpy(current_sig, argv[1]);
   fprintf(stdout, "\n");
   fprintf(stdout, "Start [%s] - %d", current_sig, (int)getpid());
@@ -39,12 +50,12 @@ void sig_handler2(int signo)
 {
   switch(signo)
   {
-    case SIGUSR1:
+    case SIGUSR1:   // print every child process
       fprintf(stdout, "\n");
       fprintf(stdout, "Running [%s] - %d", current_sig, (int)getpid());
       fprintf(stdout, "\n");
       break;
-    case SIGUSR2:
+    case SIGUSR2:   // exit every child process
       fprintf(stdout, "\n");
       fprintf(stdout, "Exit [%s] - %d", current_sig, (int)getpid());
       fprintf(stdout, "\n");
