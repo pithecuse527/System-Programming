@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <signal.h>
-#include <sys/wait.h>
 #include <unistd.h>
-#define MAX_PROCESS_AMOUNT 20
+#include <sys/wait.h>
 
-void sig_handler(int signo);
-pid_t childs[MAX_PROCESS_AMOUNT];
+pid_t childs[15];
 int i;
 
+void sig_handler(int signo);
 int main()
 {
-
+  i = 0;
   if(signal(SIGINT, (void*)sig_handler) == SIG_ERR)
   {
     fprintf(stderr, "can't catch SIGINT\n");
@@ -22,19 +22,22 @@ int main()
     fprintf(stderr, "can't catch SIGSTP\n");
     exit(-1);
   }
+  
   if(signal(SIGUSR1, (void*)sig_handler) == SIG_ERR)
   {
     fprintf(stderr, "can't catch SIGUSR1\n");
     exit(-1);
   }
+  
   if(signal(SIGUSR2, (void*)sig_handler) == SIG_ERR)
   {
     fprintf(stderr, "can't catch SIGUSR2\n");
     exit(-1);
   }
 
-  for (;;) pause();   // wait for my signal
-
+  for (;;)
+    pause();   // wait for my signal
+  
 }
 
 void sig_handler(int signo)
@@ -61,14 +64,14 @@ void sig_handler(int signo)
       {
         if(execl("./sig", "sig", "sigstp", (char *)0) < 0)
         {
-          fprintf(stderr, "execl error on SIGINT\n");
+          fprintf(stderr, "execl error on SIGTSTP\n");
           exit(-1);
         }
       }
       else childs[i++] = pid;
       break;
     case SIGUSR1:
-      for(j=0;j<=i;j++)
+      for(j=0;j<i;j++)
       {
         if(kill(childs[j], SIGUSR1) < 0)
         {
@@ -78,11 +81,15 @@ void sig_handler(int signo)
       }
       break;
     case SIGUSR2:
-      if(kill(0, SIGUSR2) < 0)
+      for(j=0;j<i;j++)
       {
-        fprintf(stderr, "kill error on SIGUSR2\n");
-        exit(-1);
+        if(kill(childs[j], SIGUSR2) < 0)
+        {
+          fprintf(stderr, "kill error on SIGUSR2\n");
+          exit(-1);
+        }
       }
+      i = 0;
       break;
     default:
       fprintf(stderr, "unknown signal...\n");
