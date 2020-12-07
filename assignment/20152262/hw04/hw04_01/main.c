@@ -16,10 +16,16 @@ void *thr_fn(void *arg);
 
 int main(int argc, char *argv[])
 {
-	int err, i;							// err
+	int err, i;							// err and index
 	pthread_t tid1, tid2;		// using two threads
 	void *tret;							// return val. from a thread
 	int until = atoi(argv[1]);		// change the given number to int
+
+	if(argc > 2)
+	{
+		fprintf(stderr, "usage: main [ the number of threads ]");
+		return -1;
+	}
 
 	if(until % 2)		// if the given number is not a even number, add 1
 	{
