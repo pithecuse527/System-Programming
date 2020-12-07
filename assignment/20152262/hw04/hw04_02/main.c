@@ -16,8 +16,6 @@
 #define MAX_PTHREAD_NUM 10
 #define RAND_UPPER 10
 #define RAND_LOWER 5
-#define TRUE 1
-#define FALSE 0
 
 void *thr_fn(void *arg);
 int *cursor;    // array runner
@@ -32,12 +30,12 @@ int main(int argc, char *argv[])
   int *arr;                          // the array consisted of random numbers
   pthread_t *tid;		                 // using thread with the number of n_thread
   void **tret;							         // return val. from a thread
-  int threads_are_alive;             // are those threads still alive?
 
-  //input check
-  if(n_thread > MAX_PTHREAD_NUM || size_of_arr > MAX_ARR_SIZE)
+  // //input check
+  if(n_thread > MAX_PTHREAD_NUM || n_thread < 1 || size_of_arr > MAX_ARR_SIZE || size_of_arr < n_thread)
   {
-    fprintf(stderr, "useage:  main [ the number of threads (maximum is 10) ] [ the size of array (5 ~ 10) ]\n");
+    fprintf(stderr, "usage: ./main [the number of threads (1 ~ %d)] [the size of array (%d ~ %d)]\n", MAX_PTHREAD_NUM, n_thread, MAX_ARR_SIZE);
+    fprintf(stderr, "array size must be equal or bigger than the number of threads!\n");
     return -1;
   }
 
@@ -50,16 +48,15 @@ int main(int argc, char *argv[])
   }
   fprintf(stdout, "\n\n");
   arr[++i] = NULL;    // THIS IS THE END
-  cursor = arr;
 
-  tid = malloc(n_thread * sizeof(pthread_t));
+  cursor = arr;       // cursor starts from arr[0]
+  tid = malloc(n_thread * sizeof(pthread_t));   // tid malloc and create threads
   for(i=0; i<n_thread; i++)
   {
     pthread_create(&tid[i], NULL, thr_fn, (void*)(i+1));
   }
-  threads_are_alive = TRUE;
 
-  // main function should wait until every threads are alive
+  // main function should wait while every threads are alive
   for(i=0; i<n_thread; i++)
   {
     err = pthread_join(tid[i], NULL);
@@ -75,7 +72,6 @@ int main(int argc, char *argv[])
 
 void *thr_fn(void *arg)
 {
-  int num = (int)arg;     // to check what thread is it easily
   pthread_t tid = pthread_self();
   int sleep_time;
 
@@ -85,7 +81,7 @@ void *thr_fn(void *arg)
     sleep_time = *cursor;   // save the sleeping time
     cursor++;               // while the thread sleep, cursor should move forward for the other threads
     sleep(sleep_time);
-    fprintf(stdout, "(0x%x) - element[%d] : %d\n", (unsigned int)tid, num, sleep_time);
+    fprintf(stdout, "(0x%x) - element[%d] : %d\n", (unsigned int)tid, cursor, sleep_time);
   }
 
   pthread_exit(0);
