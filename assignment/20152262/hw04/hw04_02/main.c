@@ -17,21 +17,29 @@
 #define RAND_UPPER 10
 #define RAND_LOWER 5
 
-void *thr_fn(void *arg);
-int *cursor;    // array runner
-                // not sure why I have to use this for global
-                // maybe bacuse it would be much easier accessing to random number array?
+// element for a linked list
+typedef struct element {
+  int e_val;
+  int e_index;
+  struct element *e_next;
+} element;
+
+struct element* element_alloc(int v, int i);
+void* thr_fn(void *arg);
+
+element *cursor;          // the array consisted of random number elements
+pthread_mutex_t locker;   // mutex locker for *arr
 
 int main(int argc, char *argv[])
 {
 	int err, i;							           // err and index
 	int n_thread = atoi(argv[1]);		   // the number of threads
   int size_of_arr = atoi(argv[2]);   // the size of array
-  int *arr;                          // the array consisted of random numbers
-  pthread_t *tid;		                 // using thread with the number of n_thread
-  void **tret;							         // return val. from a thread
+  pthread_t *arr_tid;		             // thread array pointer
+  int t_int;                         // temp integer to make a random number
+  element *arr_head;                 // element linked list head pointer
 
-  // //input check
+  //input check
   if(n_thread > MAX_PTHREAD_NUM || n_thread < 1 || size_of_arr > MAX_ARR_SIZE || size_of_arr < n_thread)
   {
     fprintf(stderr, "usage: ./main [the number of threads (1 ~ %d)] [the size of array (%d ~ %d)]\n", MAX_PTHREAD_NUM, n_thread, MAX_ARR_SIZE);
@@ -39,49 +47,91 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  // arr malloc and place the random integer (extra memory for END indicator)
-  arr = malloc((size_of_arr+1) * sizeof(int));
+  // arr_head and cursor ready
+  arr_head = element_alloc(0, 0);
+  cursor = arr_head;
+
+  // mutex locker ready
+  pthread_mutex_init(&locker, NULL);
+
+  // elements are linked as a linked list
   for(i=0; i<size_of_arr; i++)
   {
-    arr[i] = rand() % (RAND_UPPER - RAND_LOWER + 1) + RAND_LOWER;
-    fprintf(stdout, "%d ", arr[i]);
+    t_int = rand() % (RAND_UPPER - RAND_LOWER + 1) + RAND_LOWER;    // random number ready
+    cursor -> e_next = element_alloc(t_int, i+1);   // malloc next element with the given rand number and the index
+    cursor = cursor -> e_next;                      // cursor goes forward
+    fprintf(stdout, "%d ", cursor -> e_val);           // print the random numbers
   }
   fprintf(stdout, "\n\n");
-  arr[++i] = NULL;    // THIS IS THE END
 
-  cursor = arr;       // cursor starts from arr[0]
-  tid = malloc(n_thread * sizeof(pthread_t));   // tid malloc and create threads
+  cursor = arr_head -> e_next;    // relocate the cursor to first element
+  arr_tid = malloc(n_thread * sizeof(pthread_t));   // malloc for thread array
+
+  // thread create
   for(i=0; i<n_thread; i++)
   {
-    pthread_create(&tid[i], NULL, thr_fn, (void*)(i+1));
+    err = pthread_create(&arr_tid[i], NULL, thr_fn, NULL);
+    if(err != 0)
+    {
+      fprintf(stderr, "error on thread create %d\n", i);
+    }
   }
 
   // main function should wait while every threads are alive
   for(i=0; i<n_thread; i++)
   {
-    err = pthread_join(tid[i], NULL);
+    err = pthread_join(arr_tid[i], NULL);
     if(err != 0)
-		{
-			fprintf(stderr, "join error on thread %d\n", i);
-			return -1;
-		}
+    {
+      fprintf(stderr, "join error on thread %d\n", i);
+      return -1;
+    }
+  }
+
+  // mem. free
+  cursor = arr_head -> e_next;
+  while(cursor)
+  {
+    arr_head = cursor;
+    cursor = cursor -> e_next;
+    free(arr_head);
   }
 
 	return 0;
 }
 
-void *thr_fn(void *arg)
+struct element* element_alloc(int v, int i)
 {
-  pthread_t tid = pthread_self();
-  int sleep_time;
-
-  // while the cursor points something
-  while(*cursor)
+  struct element *ep;
+  if ((ep = malloc(sizeof(element))))
   {
-    sleep_time = *cursor;   // save the sleeping time
-    cursor++;               // while the thread sleep, cursor should move forward for the other threads
-    sleep(sleep_time);
-    fprintf(stdout, "(0x%x) - element[%d] : %d\n", (unsigned int)tid, cursor, sleep_time);
+    ep -> e_val = v;
+    ep -> e_index = i;
+    ep -> e_next = NULL;
+  }
+  else
+  {
+    fprintf(stderr, "malloc failed!\n");
+    return NULL;
+  }
+  return ep;
+}
+
+void* thr_fn(void *arg)
+{
+  pthread_t tid = pthread_self();     // thread id
+  int t_sleep;      // time for sleep
+  int i_element;   // index of element
+
+  while(cursor)
+  {
+    pthread_mutex_lock(&locker);
+    t_sleep = cursor -> e_val;
+    i_element = cursor -> e_index;
+    cursor = cursor -> e_next;
+    pthread_mutex_unlock(&locker);
+    sleep(t_sleep);
+    fprintf(stdout, "%x - element[%d] : %d\n", (unsigned int)tid, i_element, t_sleep);
   }
 
   pthread_exit(0);
