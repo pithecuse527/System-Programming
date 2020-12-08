@@ -1,4 +1,4 @@
-#include "apue.h"
+#include "../apue.h"
 #include <pthread.h>
 
 void cleanup(void *arg)
@@ -12,7 +12,7 @@ void *thr_fn1(void *arg)
 	pthread_cleanup_push(cleanup, "thread 1 first handler");
 	pthread_cleanup_push(cleanup, "thread 1 second handler");
 	printf("thread 1 push complete\n");
-	
+
 	if(arg) return((void*)1);
 
 	pthread_cleanup_pop(0);
@@ -27,7 +27,7 @@ void *thr_fn2(void *arg)
 	pthread_cleanup_push(cleanup, "thread 2 first handler");
 	pthread_cleanup_push(cleanup, "thread 2 second handler");
 	printf("thread 2 push complete\n");
-	
+
 	if(arg) return((void*)2);
 
 	pthread_cleanup_pop(0);
@@ -61,5 +61,3 @@ int main()
 
 	exit(0);
 }
-
-
