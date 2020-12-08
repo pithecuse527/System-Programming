@@ -34,6 +34,7 @@ int main(int argc, char *argv[])
 	}
 
 	// loop until the index reaches the given number(argv)
+	// join right away to print inorder
 	for(i=1; i<until; i+=2)
 	{
 		// fprintf(stdout, "!%d!\n", i);
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 
-		err = pthread_create(&tid2, NULL, thr_fn, (void*)i+1);		// creat the thread2
+		err = pthread_create(&tid2, NULL, thr_fn, (void*)(i+1));		// creat the thread2
 		if(err != 0)		// shut this down when error detected
 		{
 			fprintf(stderr, "error on thread %d\n", i+1);
